@@ -1,0 +1,97 @@
+<template>
+  <view id="adminPage" class="container">
+    <view class="button-large-wrap">
+      <wxc-button size="large" type="beauty" value="开门" bind:click="openDoor">开门</wxc-button>
+    </view>
+    <view class="button-large-wrap">
+      <wxc-button size="large" type="beauty" value="更新时间" bind:click="updateTime">更新时间</wxc-button>
+    </view>
+    <view class="button-large-wrap">
+      <wxc-button size="large" type="beauty" value="更新门号" bind:click="updateDoor">更新门号</wxc-button>
+    </view>
+    <view class="button-large-wrap">
+      <wxc-button size="large" type="beauty" value="截止点" bind:click="updateEndTime">截止点</wxc-button>
+    </view>
+    <view class="button-large-wrap">
+      <wxc-button size="large" type="beauty" value="更新秘钥" bind:click="updateKey">更新秘钥</wxc-button>
+    </view>
+    <view class="button-large-wrap">
+      <wxc-button size="large" type="beauty" value="测试" bind:click="test">测试</wxc-button>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  // import drawQrcode from 'weapp-qrcode'
+  let drawQrcode = require('weapp-qrcode')
+  export default class Home extends wepy.page {
+    config = {
+      navigationBarTitleText: '首页',
+      usingComponents: {
+        'wxc-button': '../../packages/@minui/wxc-button/dist/index',
+        'wxc-icon': '../../packages/@minui/wxc-icon/dist/index'
+      }
+    }
+    components = {}
+    data = {
+      text: 'xxxx',
+      inputValue: '',
+      maskStatus: 'hide',
+      state: {
+        updateTimeState: false,
+        updateDoorState: false,
+        updateEndTimeState: false,
+        updateKeyState: false,
+        testState: false
+      }
+    }
+    draw() {
+      drawQrcode({
+        width: 200,
+        height: 200,
+        canvasId: 'myQrcode',
+        typeNumber: 6,
+        text: this.text
+      })
+    }
+    onLoad() {
+      this.draw()
+    }
+    computed = {}
+    methods = {
+      openDoor() {},
+      updateTime() {},
+      updateDoor() {},
+      updateEndTime() {},
+      updateKey() {},
+      test() {}
+    }
+    event = {}
+  }
+</script>
+
+<style>
+  Page {
+    background-color: #d3d3d3;
+  }
+  .container {
+    width: 100%;
+    height: 100%;
+    padding-top: 20rpx;
+    background: #fff;
+    text-align: center;
+  }
+  .button-large-wrap {
+    margin-bottom: 20rpx;
+  }
+  .container:after {
+    display: block;
+    content: " ";
+    clear: both;
+    visibility: hidden;
+    height: 0;
+  }
+
+</style>

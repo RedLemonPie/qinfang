@@ -1,97 +1,187 @@
 <template>
   <view id="adminPage" class="container">
-    <view class="button-large-wrap">
-      <wxc-button size="large" type="beauty" value="开门" bind:click="openDoor">开门</wxc-button>
-    </view>
-    <view class="button-large-wrap">
-      <wxc-button size="large" type="beauty" value="更新时间" bind:click="updateTime">更新时间</wxc-button>
-    </view>
-    <view class="button-large-wrap">
-      <wxc-button size="large" type="beauty" value="更新门号" bind:click="updateDoor">更新门号</wxc-button>
-    </view>
-    <view class="button-large-wrap">
-      <wxc-button size="large" type="beauty" value="截止点" bind:click="updateEndTime">截止点</wxc-button>
-    </view>
-    <view class="button-large-wrap">
-      <wxc-button size="large" type="beauty" value="更新秘钥" bind:click="updateKey">更新秘钥</wxc-button>
-    </view>
-    <view class="button-large-wrap">
-      <wxc-button size="large" type="beauty" value="测试" bind:click="test">测试</wxc-button>
-    </view>
-
+    <van-nav-bar
+      title="管理员菜单"
+      left-text="返回"
+      right-text="按钮"
+      left-arrow
+      bind:click-left="onClickLeft"
+      bind:click-right="onClickRight"
+    />
+    <van-tabs active="{{ active }}" bind:change="onChange">
+      <van-tab title="开门">
+        <van-button type="primary" size="large" @click="openDoor()">开门</van-button>
+      </van-tab>
+      <van-tab title="更新时间">
+        <van-button type="primary" size="large" @click="updateTime()">更新时间</van-button>
+      </van-tab>
+      <van-tab title="更新门牌">
+        <van-field value="{{ doornumber }}" label="门牌号" placeholder="请输入要更新的门牌号" bind:change="onChangedoornum" />
+        <van-button type="primary" size="large" @click="updateDoor()">更新门牌</van-button>
+      </van-tab>
+      <van-tab title="结束时间">
+        <van-field value="{{ endtime }}" label="结束时间" placeholder="请输入要更新的结束时间"  bind:change="onChangeendtime" />
+        <van-button type="primary" size="large" @click="updateEndTime()">结束时间</van-button>
+      </van-tab>
+      <van-tab title="更新秘钥">
+        <van-field value="{{ updatekey }}" label="秘钥" placeholder="请输入要更新的秘钥" bind:change="onChangekey"/>
+        <van-button type="primary" size="large" @click="updateKey()">更新秘钥</van-button>
+      </van-tab>
+      <van-tab title="测试">
+        <van-field value="{{test.doornumber}}" label="门牌号" placeholder="请输入" bind:change="onChangetestdoornum"/>
+        <van-datetime-picker type="datetime" data-type="datetime" value="{{ test.starttime }}" bind:input="onChangeteststarttime" visible-item-count="3" item-height= "33" title="开始时间"/>
+        <van-datetime-picker type="datetime" data-type="datetime" value="{{ test.endtime }}" bind:input="onChangetestendtime" visible-item-count="3" item-height= "33" title="结束时间"/>
+        <van-button type="primary" size="large" @click="test()">测试</van-button>
+      </van-tab>
+    </van-tabs>
+    <van-popup show="{{ show }}" >
+      <qrcode  show="{{ show }}" :pass.sync="passStr"></qrcode>
+      <view class="passStr">{{passStr}}</view>
+      <van-button @click = "onclose()">关闭</van-button>
+    </van-popup>
+    <!-- 开门 更新时间 更新门牌  更新结束时间 更新秘钥 测试 -->
   </view>
-</template>
+    </template>
+
 
 <script>
-  import wepy from 'wepy'
-  // import drawQrcode from 'weapp-qrcode'
-  let drawQrcode = require('weapp-qrcode')
-  export default class Home extends wepy.page {
-    config = {
-      navigationBarTitleText: '首页',
-      usingComponents: {
-        'wxc-button': '../../packages/@minui/wxc-button/dist/index',
-        'wxc-icon': '../../packages/@minui/wxc-icon/dist/index'
-      }
+import wepy from 'wepy'
+import Qrcode from '../../components/qrcode'
+let drawQrcode = require('weapp-qrcode')
+export default class Home extends wepy.page {
+  config = {
+    active: 0,
+    navigationBarTitleText: '首页',
+    usingComponents: {
+      'van-button': '/vant/button/index',
+      'van-nav-bar': '/vant/nav-bar/index',
+      'van-tab': '/vant/tab/index',
+      'van-tabs': '/vant/tabs/index',
+      'van-popup': '/vant/popup/index',
+      'van-field': '/vant/field/index',
+      'van-datetime-picker': '/vant/datetime-picker/index'
     }
-    components = {}
-    data = {
-      text: 'xxxx',
-      inputValue: '',
-      maskStatus: 'hide',
-      state: {
-        updateTimeState: false,
-        updateDoorState: false,
-        updateEndTimeState: false,
-        updateKeyState: false,
-        testState: false
-      }
-    }
-    draw() {
-      drawQrcode({
-        width: 200,
-        height: 200,
-        canvasId: 'myQrcode',
-        typeNumber: 6,
-        text: this.text
-      })
-    }
-    onLoad() {
-      this.draw()
-    }
-    computed = {}
-    methods = {
-      openDoor() {},
-      updateTime() {},
-      updateDoor() {},
-      updateEndTime() {},
-      updateKey() {},
-      test() {}
-    }
-    event = {}
   }
+  onChange(event) {}
+  components = {
+    qrcode: Qrcode
+  }
+  // 数据绑定
+  onChangedoornum(event){
+    this.doornumber = event.detail
+  }
+  onChangeendtime(event){
+    this.endtime = event.detail
+  }
+  onChangekey(event){
+    this.updatekey = event.detail
+  }
+  onChangetestendtime(event){
+    this.test.endtime = event.detail
+    const date = new Date(event.detail).toLocalString()
+  }
+  onChangeteststarttime(event){
+    console.log(event.detail)
+    this.test.starttime = event.detail
+    const date = new Date(event.detail).toLocalString()
+  }
+  onChangetestdoornum(event){
+    this.test.doornumber = event.detail
+  }
+  //
+  data = {
+    updateTime: '',
+    passStr: '000',
+    show: false,
+    text: 'xxxx',
+    inputValue: '',
+    maskStatus: 'hide',
+    doornumber: '',
+    endtime:'5',
+    updatekey: '',
+    key: '',
+    minDate: new Date().getTime(),
+    test:{
+      doornumber: '',
+      starttime: new Date().getTime(),
+      endtime: new Date().getTime()
+    }
+  } 
+
+  draw() {
+    drawQrcode({
+      width: 200,
+      height: 200,
+      canvasId: 'myQrcode',
+      typeNumber: 6,
+      text: this.passStr
+    }) 
+  }
+  onLoad() {
+    this.draw() 
+  }
+  onclose(){
+    this.show = false
+  }
+  getUpdateTime() {
+    let date = new Date()
+    var Y = date.getFullYear()
+    var M =
+      date.getMonth() + 1 < 10
+        ? '0' + (date.getMonth() + 1)
+        : date.getMonth() + 1
+    var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+    var h = date.getHours() < 10 ? '0' + date.getHours() : date.getHours() 
+    var m =
+      date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+    var s =
+      date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+    let t = date.getDay()
+    this.updateTime = Y + M + D + h + m + s + t
+    console.log(this.updateTime)
+  }
+  computed = {} 
+  methods = {
+    onClose() {
+      this.setData({ show: false }) 
+    },
+    openDoor() {
+      this.passStr = 'NameCLYLevel' + 'OpenDoor' + '123456' + '$' 
+      this.show = true
+    },
+    updateTime() {
+      this.getUpdateTime() 
+      this.passStr = 'NameCLYLevel'+ 'UpdateWhile' + this.updateTime + '$'
+      this.show = true
+    },
+    updateDoor() {
+      this.passStr = 'NameCLYLevel'+ 'UpdateRoom' + this.doornumber + '$'
+      this.show = true
+    },
+    updateEndTime() {
+      this.passStr = 'NameCLYLevel'+ 'UpdateEndTime' + this.endtime + '$'
+      this.show = true
+    },
+    updateKey() {
+      this.passStr = 'NameCLYLevel'+ 'UpdateKey' + this.updatekey + '$'
+      this.show = true
+    },
+    test() {
+      //Name_XSLevelRoomA101Time11550077261Time21550080201$
+      this.passStr = 'Name_XSLevelRoom'+ this.test.doornumber + 'Time'+ this.test.starttime.toString().substr(0,10) + 'Time' + this.test.endtime.toString().substr(0,10) +'$'
+      console.log(this.test.starttime)
+      this.show = true
+    }
+  } 
+  event = {} 
+}
 </script>
 
 <style>
-  Page {
-    background-color: #d3d3d3;
-  }
-  .container {
-    width: 100%;
-    height: 100%;
-    padding-top: 20rpx;
-    background: #fff;
-    text-align: center;
-  }
-  .button-large-wrap {
-    margin-bottom: 20rpx;
-  }
-  .container:after {
-    display: block;
-    content: " ";
-    clear: both;
-    visibility: hidden;
-    height: 0;
-  }
-
+Page {
+  background-color: #d3d3d3 
+}
+.passStr{
+  font-size: 20rpx;
+}
 </style>

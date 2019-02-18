@@ -1,12 +1,5 @@
 <style lang="less">
-  .container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-  }
+  
 </style>
 
 <script>
@@ -21,9 +14,9 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/index',
-        'pages/admin/admin',
-        'pages/home/index'
+        // 'pages/index/index',
+        'pages/admin/admin'
+        // 'pages/home/index'
         
         // 'pages/reserve/list',  
         // 'pages/profile/index',
@@ -37,42 +30,9 @@
       }
     }
     globalData = {
-      userInfo: null,
-      tabBar: {
-        list: [
-          {
-            pagePath: 'home/index',
-            text: '首页',
-            icon_class: 'iconfont icon-tab-home', // 这里用的是阿里图标,  可以替换成图片
-            selected: true // 图片写img: '未选中的图片路径'img_act: '被选中的图片路径'
-          },
-          {
-            pagePath: 'admin/admin',
-            text: '发现',
-            icon_class: 'iconfont icon-tab-find',
-            selected: false
-          },
-          {
-            pagePath: 'myInfo',
-            text: '我的',
-            icon_class: 'iconfont icon-tab-my',
-            selected: false
-          }
-        ]
-      }
+      userInfo: null
     }
-    tabBarClickHandle(id, that) {
-      let tbList = this.globalData.tabBar.list
-      tbList.forEach((item, index) => {
-        if (id === index) {
-          tbList[id].selected = true;
-        } else {
-          tbList[index].selected = false;
-        }
-      });
-      that.$apply();
-      return this.globalData.tabBar;
-    }
+    
     constructor() {
       super()
       this.use('requestfix')

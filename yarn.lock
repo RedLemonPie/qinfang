@@ -2247,6 +2247,11 @@ uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
+vant-weapp@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/vant-weapp/-/vant-weapp-0.5.3.tgz#04fb89d6468f21d802c6bbd4cf932791f274084b"
+  integrity sha512-5h7m9g8+Mx9DG0n2qThjYVnduA8dNdO6Qp5VXN5+9gPuHJzOl4bhpvbir2vRDVzT0JRolqBZ1npC2W/B1AGkPQ==
+
 verror@1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/verror/-/verror-1.10.0.tgz#3a105ca17053af55d6e270c1f8288682e18da400"
@@ -2283,7 +2288,7 @@ wepy-compiler-babel@^1.5.1:
   dependencies:
     babel-core "^6.20.0"
 
-wepy-compiler-less@^1.3.10:
+wepy-compiler-less@^1.3.14:
   version "1.3.14"
   resolved "https://registry.yarnpkg.com/wepy-compiler-less/-/wepy-compiler-less-1.3.14.tgz#befbaaad356ab9cdff02734067d5fb6f09317a44"
   integrity sha512-70n7Rb0i987RBun9EC+aTBHsscwSb6Vb4r7l+dgOy2KGyyvPvmhh2vSQduxFnhJzHuYRYMV+hxH51Jss+jE+vg==

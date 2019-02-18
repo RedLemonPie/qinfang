@@ -1,0 +1,53 @@
+<template>
+  <view id="HomePage">
+    <view>
+      <view show=""></view>
+      <view show=""></view>
+      <view show=""></view>
+    </view>
+    <view>
+      <van-tabbar active="{{ active }}" bind:change="onChange">
+        <van-tabbar-item icon="home-o">标签</van-tabbar-item>
+        <van-tabbar-item icon="search">标签</van-tabbar-item>
+        <van-tabbar-item icon="setting-o">标签</van-tabbar-item>
+      </van-tabbar>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: '首页',
+    usingComponents: {
+      // 'van-button': '/vant/button/index',
+      // 'van-nav-bar': '/vant/nav-bar/index',
+      // 'van-tab': '/vant/tab/index',
+      'van-tabbar': '/vant/tabbar/index',
+      'van-tabbar-item': '/vant/tabbar-item/index'
+      // 'van-field': '/vant/field/index',
+      // 'van-datetime-picker': '/vant/datetime-picker/index'
+    }
+  };
+  components = {};
+  data = {
+    active: 0
+  };
+  onLoad() {}
+  computed = {};
+  methods = {};
+  event = {};
+
+  onChange(event) {
+    console.log(event.detail);
+  }
+}
+</script>
+
+<style>
+Page {
+  background-color: #d3d3d3;
+}
+</style>

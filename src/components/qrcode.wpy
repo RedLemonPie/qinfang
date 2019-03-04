@@ -26,7 +26,8 @@
     methods = {
     }
     watch = {
-      passStr(newValue, oldValue) {
+      pass(newValue, oldValue) {
+        console.log(this.pass)
         this.draw()
       }
     }
@@ -39,7 +40,7 @@
         height: 200,
         canvasId: 'myQrcode',
         typeNumber: 6,
-        text: this.passStr
+        text: this.pass
       })
     }
   }

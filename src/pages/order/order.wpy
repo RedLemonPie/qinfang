@@ -1,0 +1,109 @@
+<template>
+  <view class="bookpiano-container" id="bookpianoPage">
+    
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import {get,post} from '../../utils/api'
+import Dialog from '../../../dist/vant/dialog/dialog';
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: '预订琴房',
+    usingComponents: {
+      // 'van-button': '/vant/button/index',
+      // 'van-nav-bar': '/vant/nav-bar/index',
+      // 'van-tab': '/vant/tab/index',
+      // 'van-tabbar': '/vant/tabbar/index',
+      // 'van-tabbar-item': '/vant/tabbar-item/index',
+      'van-field': '/vant/field/index',
+      'van-dialog': '/vant/dialog/index',
+      // 'van-datetime-picker': '/vant/datetime-picker/index'
+    }
+  };
+  components = {};
+  data = {
+    active: 0,
+    username: '',
+    password: ''
+  };
+  onLoad() {}
+  computed = {};
+  methods = {};
+  event = {};
+
+  onChange(event) {
+    console.log(event.detail);
+  }
+  onChangepassword(event) {
+    this.password = event.detail;
+  }
+  onChangeusername(event) {
+    this.username = event.detail;
+  }
+  formSubmit(e){
+    let form = {
+      username: this.username,
+      password: this.password
+    }
+    post('/user/login', form)
+      .then(res => {
+        if (res.data.code === 200){
+          wx.setStorageSync("token", res.data.data.token)
+          wx.setStorageSync("username", res.data.data.username)
+          console.log(wx.getStorageSync("token"))
+          wx.redirectTo({
+            url: '/pages/index/index'
+          })
+        } else {
+          Dialog.alert({
+          message: res.data.msg
+          }).then(() => {
+
+          });
+        }
+        console.log(res)
+    })
+  }
+}
+</script>
+
+<style>
+Page {
+  background-color: #ffffff;
+}
+.login-container {
+  padding: 20px;
+}
+
+.input {
+  border: 1px solid #ddd;
+  font-size: 12px;
+  padding: 0 10px;
+  line-height: 30px;
+  height: 30px;
+  margin: 20px 0;
+}
+
+.input-placeholder {
+  color: #aaa !important;
+}
+
+.login-btn {
+  margin: 20px 0;
+  border: 1px solid #ccc !important;
+  color: #777 !important;
+  width: 100%;
+  border-radius: 0px;
+}
+
+.register {
+  color: #998c90;
+  font-size: 12px;
+}
+
+.btn-hover {
+  background-color: #eee !important;
+}
+</style>

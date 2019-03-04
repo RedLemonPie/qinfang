@@ -1,0 +1,134 @@
+<template>
+  <view class="login-container" id="LoginPage">
+    <form bindsubmit="formSubmit">
+      <van-dialog id="van-dialog" />
+      <van-cell-group>
+        <van-field
+          required
+          clearable
+          value="{{ username }}"
+          label="手机号"
+          placeholder="请输入手机号"
+          bind:change="onChangeusername"
+        />
+        <van-field
+          value="{{ password }}"
+          type="password"
+          label="密码"
+          placeholder="请输入密码"
+          bind:change="onChangepassword"
+        />
+      </van-cell-group>
+      <view>
+        <button
+          formType="submit"
+          size="mini"
+          plain="true"
+          class="login-btn"
+          hover-class="btn-hover"
+        >登 录</button>
+      </view>
+      <view>
+        <navigator url="/pages/register/register" redirect class="register">30秒快速注册</navigator>
+      </view>
+    </form>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import {get,post} from '../../utils/api'
+import Dialog from '../../../dist/vant/dialog/dialog';
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: '登录页',
+    usingComponents: {
+      'van-field': '/vant/field/index',
+      'van-dialog': '/vant/dialog/index'
+    }
+  };
+  components = {};
+  data = {
+    active: 0,
+    username: '',
+    password: ''
+  };
+  onLoad() {}
+  computed = {};
+  methods = {};
+  event = {};
+
+  onChange(event) {
+    console.log(event.detail);
+  }
+  onChangepassword(event) {
+    this.password = event.detail;
+  }
+  onChangeusername(event) {
+    this.username = event.detail;
+  }
+  formSubmit(e){
+    let form = {
+      username: this.username,
+      password: this.password
+    }
+    post('/user/login', form)
+      .then(res => {
+        if (res.data.code === 200){
+          wx.setStorageSync("token", res.data.data.token)
+          wx.setStorageSync("username", res.data.data.username)
+          console.log(wx.getStorageSync("token"))
+          wx.redirectTo({
+            url: '/pages/index/index'
+          })
+        } else {
+          Dialog.alert({
+          message: res.data.msg
+          }).then(() => {
+
+          });
+        }
+        console.log(res)
+    })
+  }
+}
+</script>
+
+<style>
+Page {
+  background-color: #ffffff;
+}
+.login-container {
+  padding: 20px;
+}
+
+.input {
+  border: 1px solid #ddd;
+  font-size: 12px;
+  padding: 0 10px;
+  line-height: 30px;
+  height: 30px;
+  margin: 20px 0;
+}
+
+.input-placeholder {
+  color: #aaa !important;
+}
+
+.login-btn {
+  margin: 20px 0;
+  border: 1px solid #ccc !important;
+  color: #777 !important;
+  width: 100%;
+  border-radius: 0px;
+}
+
+.register {
+  color: #998c90;
+  font-size: 12px;
+}
+
+.btn-hover {
+  background-color: #eee !important;
+}
+</style>

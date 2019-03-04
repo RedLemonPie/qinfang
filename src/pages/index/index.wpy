@@ -1,53 +1,237 @@
 <template>
   <view id="HomePage">
     <view>
-      <view show=""></view>
-      <view show=""></view>
-      <view show=""></view>
-    </view>
-    <view>
-      <van-tabbar active="{{ active }}" bind:change="onChange">
-        <van-tabbar-item icon="home-o">标签</van-tabbar-item>
-        <van-tabbar-item icon="search">标签</van-tabbar-item>
-        <van-tabbar-item icon="setting-o">标签</van-tabbar-item>
-      </van-tabbar>
+      <view wx:if="{{active === 0}}">
+        <van-cell-group>
+          <van-cell title="琴房预订" is-link label="预订琴房" url="/pages/order/order"/>
+        </van-cell-group>
+      </view>
+      <view wx:if="{{active === 1}}">
+        <van-cell-group>
+          <view wx:if="{{11}}"></view>
+          <van-cell
+            wx:for="{{userbooklist}}"
+            wx:key="{{item}}"
+            title="琴房:{{item.pianoroom_id}}"
+            value="内容"
+            label="时间:{{item.freeroom_starttime}}-{{item.freeroom_endtime}}"
+            border="{{ false }}"
+          />
+        </van-cell-group>
+      </view>
+      <view wx:if="{{active === 2}}">
+        <van-notify id="erroradmin"/>
+        <view wx:if="{{!username}}" class="section">
+          <view>
+            <button
+              bindtap="login"
+              size="mini"
+              plain="true"
+              class="login-btn"
+              hover-class="btn-hover"
+            >登录</button>
+          </view>
+          <view>
+            <button
+              bindtap="toAdmin"
+              size="mini"
+              plain="true"
+              class="login-btn"
+              hover-class="btn-hover"
+            >管理员</button>
+          </view>
+          <van-dialog
+            use-slot="true"
+            async-close
+            show="{{ toadmin }}"
+            show-cancel-button
+            bind:close="onClose"
+            bind:confirm="checkadmin"
+          >
+            <van-field
+              value="{{ adminuser }}"
+              label="管理员用户"
+              border="{{ false }}"
+              placeholder="请输入用户名"
+              bind:change="onChangeadminuser"
+            />
+            <van-field
+              value="{{ password }}"
+              label="密码"
+              border="{{ false }}"
+              placeholder="请输入密码"
+              bind:change="onChangepassword"
+            />
+          </van-dialog>
+        </view>
+        <view wx:if="{{username}}">
+          <van-cell-group>
+            <van-cell title="用户名" value="{{userinfo.username}}"/>
+            <van-cell title="真实姓名" value="{{userinfo.real_name}}"/>
+            <van-cell title="班级" value="{{userinfo.school_class}}"/>
+            <van-cell title="学号" value="{{userinfo.school_id}}"/>
+            <van-cell title="积分" value="{{userinfo.score}}"/>
+            <van-cell title="信用" value="{{userinfo.credit}}"/>
+          </van-cell-group>
+          <view>
+            <button
+              bindtap="logout"
+              size="mini"
+              plain="true"
+              class="login-btn"
+              hover-class="btn-hover"
+            >登出</button>
+          </view>
+        </view>
+      </view>
+      <view>
+        <van-tabbar active="{{ active }}" bind:change="onChange">
+          <van-tabbar-item icon="home-o">预订</van-tabbar-item>
+          <van-tabbar-item icon="search">我的预订</van-tabbar-item>
+          <van-tabbar-item icon="setting-o">用户</van-tabbar-item>
+        </van-tabbar>
+      </view>
     </view>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy';
-
+import Notify from '../../../dist/vant/notify/notify';
+import { get, post } from '../../utils/api';
 export default class Home extends wepy.page {
   config = {
     navigationBarTitleText: '首页',
     usingComponents: {
-      // 'van-button': '/vant/button/index',
+      'van-button': '/vant/button/index',
       // 'van-nav-bar': '/vant/nav-bar/index',
       // 'van-tab': '/vant/tab/index',
       'van-tabbar': '/vant/tabbar/index',
-      'van-tabbar-item': '/vant/tabbar-item/index'
-      // 'van-field': '/vant/field/index',
+      'van-tabbar-item': '/vant/tabbar-item/index',
+      'van-dialog': '/vant/dialog/index',
+      'van-notify': '/vant/notify/index',
+      'van-field': '/vant/field/index',
+      'van-cell': '/vant/cell/index',
+      'van-cell-group': '/vant/cell-group/index'
       // 'van-datetime-picker': '/vant/datetime-picker/index'
     }
   };
   components = {};
   data = {
-    active: 0
-  };
-  onLoad() {}
-  computed = {};
-  methods = {};
-  event = {};
+    active: 0,
+    adminuser: '',
+    password: '',
+    toadmin: false,
+    username: '',
+    userinfo: {
+      username: '',
+      real_name: '',
+      school_class: '',
+      school_id: '',
+      score: '',
+      credit: ''
+    },
+    userbooklist:{
 
+    }
+  }
+  onLoad() {
+    this.username = wx.getStorageSync('username');
+    if (this.username) {
+      get('/user/info').then(res => {
+        if (res.data.code === 200) {
+          let {
+            credit,
+            real_name,
+            school_id,
+            school_class,
+            score,
+            username
+          } = res.data.data;
+          this.userinfo.username = username;
+          this.userinfo.real_name = real_name;
+          this.userinfo.school_id = school_id;
+          this.userinfo.school_class = school_class;
+          this.userinfo.score = score;
+          this.userinfo.credit = credit;
+        } else {
+        }
+        console.log(res);
+      });
+    }
+  
+  }
+  computed = {}
+  methods = {}
+  event = {}
+  toAdmin(event) {
+    this.toadmin = true;
+  }
+  logout(event) {
+    wx.clearStorageSync()
+    wx.reLaunch({
+      url: '/pages/index/index'
+    })
+  }
   onChange(event) {
     console.log(event.detail);
+    this.active = event.detail;
+  }
+  onChangeadminuser(event) {
+    this.adminuser = event.detail;
+  }
+  onChangepassword(event) {
+    this.password = event.detail;
+  }
+
+  login() {
+    wx.navigateTo({
+      url: '/pages/login/login'
+    })
+  }
+  onClose(event) {
+    if (event.detail === 'cancel') {
+      this.toadmin = false
+    } else {
+      this.toadmin = false
+    }
+  }
+  checkadmin(event) {
+    if (this.adminuser === 'adminadmin' && this.password === 'password') {
+      this.toadmin = false;
+      wx.navigateTo({
+        url: '/pages/admin/admin'
+      });
+    } else {
+      Notify({
+        text: '用户名或密码错误',
+        selector: '#erroradmin'
+      });
+      this.password = '';
+      this.adminuser = '';
+    }
   }
 }
 </script>
 
 <style>
 Page {
-  background-color: #d3d3d3;
+  background-color: #ffffff;
+}
+
+.container {
+  background: #eee;
+  background-size: cover;
+  background-image: url(/images/bg.png);
+}
+.login-btn {
+  margin: 20px 0;
+  border: 1px solid #ccc !important;
+  color: #777 !important;
+  width: 100%;
+  border-radius: 0px;
+}
+.btn-hover {
+  background-color: #eee !important;
 }
 </style>

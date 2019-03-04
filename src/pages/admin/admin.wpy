@@ -41,7 +41,7 @@
     </van-popup>
     <!-- 开门 更新时间 更新门牌  更新结束时间 更新秘钥 测试 -->
   </view>
-    </template>
+</template>
 
 
 <script>
@@ -50,7 +50,6 @@ import Qrcode from '../../components/qrcode'
 let drawQrcode = require('weapp-qrcode')
 export default class Home extends wepy.page {
   config = {
-    active: 0,
     navigationBarTitleText: '首页',
     usingComponents: {
       'van-button': '/vant/button/index',
@@ -90,6 +89,7 @@ export default class Home extends wepy.page {
   }
   //
   data = {
+    active: 0,
     updateTime: '',
     passStr: '000',
     show: false,
@@ -146,37 +146,42 @@ export default class Home extends wepy.page {
       this.setData({ show: false }) 
     },
     openDoor() {
-      this.passStr = 'NameCLYLevel' + 'OpenDoor' + '123456' + '$' 
+      this.passStr = 'NameGLYLevel' + 'OpenDoor' + '123456' + '$' 
       this.show = true
     },
     updateTime() {
       this.getUpdateTime() 
-      this.passStr = 'NameCLYLevel'+ 'UpdateWhile' + this.updateTime + '$'
+      this.passStr = 'NameGLYLevel'+ 'UpdateWhile' + this.updateTime + '$'
       this.show = true
     },
     updateDoor() {
-      this.passStr = 'NameCLYLevel'+ 'UpdateRoom' + this.doornumber + '$'
+      this.passStr = 'NameGLYLevel'+ 'UpdateRoom' + this.doornumber + '$'
       this.show = true
     },
     updateEndTime() {
-      this.passStr = 'NameCLYLevel'+ 'UpdateEndTime' + this.endtime + '$'
+      this.passStr = 'NameGLYLevel'+ 'UpdateEndTime' + this.endtime + '$'
       this.show = true
     },
     updateKey() {
-      this.passStr = 'NameCLYLevel'+ 'UpdateKey' + this.updatekey + '$'
+      this.passStr = 'NameGLYLevel'+ 'UpdateKey' + this.updatekey + '$'
       this.show = true
     },
     test() {
       //Name_XSLevelRoomA101Time11550077261Time21550080201$
-      this.passStr = 'Name_XSLevelRoom'+ this.test.doornumber + 'Time'+ this.test.starttime.toString().substr(0,10) + 'Time' + this.test.endtime.toString().substr(0,10) +'$'
+      this.passStr = 'Name_XSLevelRoom'+ this.test.doornumber + 'Time1'+ this.test.starttime.toString().substr(0,10) + 'Time2' + this.test.endtime.toString().substr(0,10) +'$'
       console.log(this.test.starttime)
       this.show = true
+    },
+    onClickLeft(){
+      wx.navigateBack({
+      delta: 1
+      })
     }
   } 
   event = {} 
 }
 </script>
-
+s
 <style>
 Page {
   background-color: #d3d3d3 

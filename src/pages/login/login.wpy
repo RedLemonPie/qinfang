@@ -77,6 +77,7 @@ export default class Home extends wepy.page {
         if (res.data.code === 200){
           wx.setStorageSync("token", res.data.data.token)
           wx.setStorageSync("username", res.data.data.username)
+          wx.setStorageSync("id", res.data.data.id)
           console.log(wx.getStorageSync("token"))
           wx.redirectTo({
             url: '/pages/index/index'

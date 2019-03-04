@@ -8,16 +8,23 @@
       </view>
       <view wx:if="{{active === 1}}">
         <van-cell-group>
-          <view wx:if="{{11}}"></view>
-          <van-cell
-            wx:for="{{userbooklist}}"
+          <view wx:if="{{!booklist}}">您还没有预订过哦</view>
+          <view
+            wx:for="{{booklist}}"
             wx:key="{{item}}"
-            title="琴房:{{item.pianoroom_id}}"
-            value="内容"
-            label="时间:{{item.freeroom_starttime}}-{{item.freeroom_endtime}}"
-            border="{{ false }}"
-          />
+            bindtap="showqrcode({{item}})"
+            idx="{{item.book_id}}"
+          >
+            <view>琴房:{{item.th_pianoroom.room_name}}</view>
+            <view>状态:{{item.book_status}}</view>
+            <view>时间:{{item.th_freeroom.freeroom_starttime}}-{{item.th_freeroom.freeroom_endtime}}</view>
+          </view>
         </van-cell-group>
+        <van-popup show="{{ show }}">
+          <qrcode show="{{ show }}" :pass.sync="passStr"></qrcode>
+          <view class="passStr">{{passStr}}</view>
+          <van-button @click="onclose()">关闭</van-button>
+        </van-popup>
       </view>
       <view wx:if="{{active === 2}}">
         <van-notify id="erroradmin"/>
@@ -96,9 +103,11 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-import Notify from '../../../dist/vant/notify/notify';
-import { get, post } from '../../utils/api';
+import wepy from 'wepy'
+import Notify from '../../../dist/vant/notify/notify'
+import Qrcode from '../../components/qrcode'
+let drawQrcode = require('weapp-qrcode')
+import { get, post } from '../../utils/api'
 export default class Home extends wepy.page {
   config = {
     navigationBarTitleText: '首页',
@@ -106,6 +115,7 @@ export default class Home extends wepy.page {
       'van-button': '/vant/button/index',
       // 'van-nav-bar': '/vant/nav-bar/index',
       // 'van-tab': '/vant/tab/index',
+      'van-popup': '/vant/popup/index',
       'van-tabbar': '/vant/tabbar/index',
       'van-tabbar-item': '/vant/tabbar-item/index',
       'van-dialog': '/vant/dialog/index',
@@ -115,9 +125,14 @@ export default class Home extends wepy.page {
       'van-cell-group': '/vant/cell-group/index'
       // 'van-datetime-picker': '/vant/datetime-picker/index'
     }
-  };
-  components = {};
+  }
+  components = {
+    qrcode: Qrcode
+  }
+
   data = {
+    show: false,
+    passStr: '',
     active: 0,
     adminuser: '',
     password: '',
@@ -131,12 +146,13 @@ export default class Home extends wepy.page {
       score: '',
       credit: ''
     },
-    userbooklist:{
-
-    }
+    booklist: [],
+    userbooklist: {}
   }
+
   onLoad() {
-    this.username = wx.getStorageSync('username');
+    this.username = wx.getStorageSync('username')
+    // this.draw()
     if (this.username) {
       get('/user/info').then(res => {
         if (res.data.code === 200) {
@@ -147,25 +163,38 @@ export default class Home extends wepy.page {
             school_class,
             score,
             username
-          } = res.data.data;
-          this.userinfo.username = username;
-          this.userinfo.real_name = real_name;
-          this.userinfo.school_id = school_id;
-          this.userinfo.school_class = school_class;
-          this.userinfo.score = score;
-          this.userinfo.credit = credit;
+          } = res.data.data
+          this.userinfo.username = username
+          this.userinfo.real_name = real_name
+          this.userinfo.school_id = school_id
+          this.userinfo.school_class = school_class
+          this.userinfo.score = score
+          this.userinfo.credit = credit
         } else {
+          this.logout()
         }
-        console.log(res);
-      });
+        console.log(res)
+      })
+      this.getUserBookList()
     }
-  
   }
   computed = {}
   methods = {}
   event = {}
+
+  getUserBookList() {
+    const id = wx.getStorageSync('id')
+    get('/book/getuserbooklist/' + id).then(res => {
+      if (res.data.code === 200) {
+        this.booklist = res.data.data
+        console.log(this.booklist)
+      } else {
+      }
+      console.log(res)
+    })
+  }
   toAdmin(event) {
-    this.toadmin = true;
+    this.toadmin = true
   }
   logout(event) {
     wx.clearStorageSync()
@@ -174,14 +203,14 @@ export default class Home extends wepy.page {
     })
   }
   onChange(event) {
-    console.log(event.detail);
-    this.active = event.detail;
+    console.log(event.detail)
+    this.active = event.detail
   }
   onChangeadminuser(event) {
-    this.adminuser = event.detail;
+    this.adminuser = event.detail
   }
   onChangepassword(event) {
-    this.password = event.detail;
+    this.password = event.detail
   }
 
   login() {
@@ -198,40 +227,72 @@ export default class Home extends wepy.page {
   }
   checkadmin(event) {
     if (this.adminuser === 'adminadmin' && this.password === 'password') {
-      this.toadmin = false;
+      this.toadmin = false
       wx.navigateTo({
         url: '/pages/admin/admin'
-      });
+      })
     } else {
       Notify({
         text: '用户名或密码错误',
         selector: '#erroradmin'
-      });
-      this.password = '';
-      this.adminuser = '';
+      })
+      this.password = ''
+      this.adminuser = ''
     }
+  }
+
+  onclose() {
+    this.show = false
+  }
+
+  draw() {
+    drawQrcode({
+      width: 200,
+      height: 200,
+      canvasId: 'myQrcode',
+      typeNumber: 6,
+      text: this.passStr
+    })
+  }
+  // \ .toString().substr(0,10)
+  showqrcode(index) {
+    console.log(index)
+    let room =
+      index.currentTarget.dataset.wpyshowqrcodeA.th_pianoroom.room_name
+    let start =
+      index.currentTarget.dataset.wpyshowqrcodeA.th_freeroom.freeroom_starttime
+    let end =
+      index.currentTarget.dataset.wpyshowqrcodeA.th_freeroom.freeroom_endtime
+    // let freeroom_endtime = index.currentTarget.dataset.wpyshowqrcodeA.th_pianoroom
+    // console.log(freeroom_endtime)
+    this.draw()
+    this.passStr =
+      'Name_XSLevelRoomA' + room + 'Time1' + start + 'Time2' + end + '$'
+    this.show = true
   }
 }
 </script>
 
 <style>
 Page {
-  background-color: #ffffff;
+  background-color: #ffffff
 }
 
 .container {
-  background: #eee;
-  background-size: cover;
-  background-image: url(/images/bg.png);
+  background: #eee
+  background-size: cover
 }
 .login-btn {
-  margin: 20px 0;
-  border: 1px solid #ccc !important;
-  color: #777 !important;
-  width: 100%;
-  border-radius: 0px;
+  margin: 20px 0
+  border: 1px solid #ccc !important
+  color: #777 !important
+  width: 100%
+  border-radius: 0px
 }
 .btn-hover {
-  background-color: #eee !important;
+  background-color: #eee !important
+}
+.passStr {
+  font-size: 20rpx
 }
 </style>
